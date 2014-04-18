@@ -27,9 +27,24 @@
 ; list of chord objects - the progession
 (define progression '())
 
+; number of chords in the progression
+(define num-chords 0)
 
 ; procedure to start the driver up
 (define (run)
+  (display (string-append 
+            "Welcome to SchArpeggio!\n"              
+            "You will be asked to enter 1 to 4 chord configurations.\n"
+            "The setup will guide you through this process.\n\n\n"))
+  
+  (set! num-chords (+ num-chords 1))
+  (get-new-chord)
+  
+  (send-chord-config-music progression)
+  (send-chord-config-draw progression)
+)
+
+(define (get-new-chord)
   (define chord  (ask-for-chord))
   (define option (ask-for-option))
   (define speed  (ask-for-speed))
@@ -43,14 +58,14 @@
                         flavor
                         range))
   
-  (send-chord-config-music chord-config)
-  (send-chord-config-draw chord-config)
+  (set! progression (append progression chord-config))
 )
 
 ; prompt the user for the chord
 (define (ask-for-chord)
   (prompt-for-and-return 
    (string-append 
+    "--- Chord #: " (number->string num-chords) " ---\n\n"
     "Please input a chord progression.\n"
     "Up to 4 chords are allowed.\n"
     "Enter the chords as lowercase letters separated by a space: ")
