@@ -1,6 +1,6 @@
 ; NOTE - remove this line when ready to port over.  
 ; Uncomment when developing to avoid errors
-#lang racket
+;#lang racket
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
@@ -13,101 +13,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; #region Objects by Mike
-
-; the message passing style chord-config object
-(define (make-chord-config chord option speed flavor range)
-  ; chord configuration
-  (define (get-chord) chord)
-  (define (set-chord arg) (set! chord arg))
-  
-  ; option to move the chord
-  (define (get-option) option)
-  (define (set-option arg) (set! option arg))
-  
-  ; speed to play the arpeggio
-  (define (get-speed) speed)
-  (define (set-speed arg) (set! speed arg))
-  
-  ; flavor of the arpeggio
-  (define (get-flavor) flavor)
-  (define (set-flavor arg) (set! flavor arg))
-  
-  ; range to allow the notes to arpeggiate over
-  (define (get-range) range)
-  (define (set-range arg) (set! range arg))
-  
-  ; dispatch procedure
-  ; if arg == null, then we're requesting a getter
-  ; otherwise, we want to use a setter with that argument
-  (define (dispatch sym . arg)
-    (if (null? arg)
-        (cond ((eq? sym 'chord) (get-chord))
-          ((eq? sym 'option) (get-option))
-          ((eq? sym 'speed) (get-speed))
-          ((eq? sym 'flavor) (get-flavor))
-          ((eq? sym 'range) (get-range))
-          (else (error 
-                 (string-append "NO SUCH GETTER METHOD: " 
-                                (symbol->string sym))))
-         )
-        (cond ((eq? sym 'chord) (set-chord arg))
-          ((eq? sym 'option) (set-option arg))
-          ((eq? sym 'speed) (set-speed arg))
-          ((eq? sym 'flavor) (set-flavor arg))
-          ((eq? sym 'range) (set-range arg))
-          (else (error 
-                 (string-append "NO SUCH SETTER METHOD: " 
-                                (symbol->string sym))))
-       )
-    )
-  )
-  dispatch
-)
-
-; convert the string input to our internal chord list
-(define (string->chord str)
-  (map note-sym-to-chord-obj 
-    (map string->symbol 
-       (map notes-to-g3-through-f4 
-            (string-split str))))
-)
-
-(define (note-sym-to-chord-obj sym)
-   (hash-ref note-with-name sym)
-)
-  
-; convert notes to appropriate representation
-(define (notes-to-g3-through-f4 str)
-  (cond ((equal? str "a") "a4")
-        ((equal? str "b") "b4")
-        ((equal? str "c") "c4")
-        ((equal? str "d") "d4")
-        ((equal? str "e") "e4")
-        ((equal? str "f") "f4")
-        (else             "g3")
-  )
-)
-
-; the message passing style chord object
-(define (make-chord str)  
-  ; the chord list
-  (define chord (string->chord str))
-  
-  ; accessors for the chord
-  (define (get-root-note) (car chord))
-  (define (get-rest) (cdr chord))
-  
-  ; dispatch procedure
-  (define (dispatch sym)
-    (cond ((eq? sym 'root-note) (get-root-note))
-          ((eq? sym 'other-notes) (get-rest))
-          (else (error 
-                 (string-append "NO SUCH METHOD ON CHORDS: " 
-                                (symbol->string sym))))
-    )
-  )
-  dispatch
-)
 
 ; global values for the enums of option, speed, flavor, and range
 (define down-to-up 'down-to-up)
@@ -163,6 +68,85 @@
         ((eq? in 'e) low-dom)
         ((eq? in 'f) low-third)
         (else        low-root)
+  )
+)
+
+
+; convert the string input to our internal chord list
+(define (chord-string->note str)
+  (note-sym-to-note-obj (string->symbol (notes-to-g3-through-f4 str)))
+)
+
+; the message passing style chord-config object
+(define (make-chord c o s f r)
+  ; manipulate chord to a proper note
+  (define root-note (chord-string->note c))
+  (define option (make-option o))
+  (define speed (make-speed s))
+  (define flavor (make-flavor f))
+  (define range (make-range r))
+  
+  ; root note
+  (define (get-root-note) root-note)
+  (define (set-root-note arg) (set! root-note arg))
+  
+  ; option for the chord
+  (define (get-option) option)
+  (define (set-option arg) (set! option arg))
+  
+  ; speed to play the chord
+  (define (get-speed) speed)
+  (define (set-speed arg) (set! speed arg))
+  
+  ; flavor of the chord
+  (define (get-flavor) flavor)
+  (define (set-flavor arg) (set! flavor arg))
+  
+  ; amount of notes in arpeggio
+  (define (get-range) range)
+  (define (set-range arg) (set! range arg))
+  
+  ; dispatch procedure
+  ; if arg == null, then we're requesting a getter
+  ; otherwise, we want to use a setter with that argument
+  (define (dispatch sym . arg)
+    (if (null? arg)
+        (cond ((eq? sym 'root-note) (get-root-note))
+          ((eq? sym 'option) (get-option))
+          ((eq? sym 'speed) (get-speed))
+          ((eq? sym 'flavor) (get-flavor))
+          ((eq? sym 'range) (get-range))
+          (else (error 
+                 (string-append "NO SUCH GETTER METHOD: " 
+                                (symbol->string sym))))
+         )
+        (cond ((eq? sym 'root-note) (set-root-note arg))
+          ((eq? sym 'option) (set-option arg))
+          ((eq? sym 'speed) (set-speed arg))
+          ((eq? sym 'flavor) (set-flavor arg))
+          ((eq? sym 'range) (set-range arg))
+          (else (error 
+                 (string-append "NO SUCH SETTER METHOD: " 
+                                (symbol->string sym))))
+       )
+    )
+  )
+  dispatch
+)
+
+(define (note-sym-to-note-obj sym)
+   (hash-ref note-with-name sym)
+)
+  
+; convert notes to appropriate representation
+(define (notes-to-g3-through-f4 str)
+  (cond ((equal? str "a") "a4")
+        ((equal? str "b") "b4")
+        ((equal? str "c") "c4")
+        ((equal? str "d") "d4")
+        ((equal? str "e") "e4")
+        ((equal? str "f") "f4")
+        (else             "g3")
   )
 )
 

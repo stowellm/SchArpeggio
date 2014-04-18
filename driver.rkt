@@ -24,16 +24,19 @@
 
 ;; #region Running the driver
 
+; list of chord objects - the progession
+(define progression '())
+
 
 ; procedure to start the driver up
 (define (run)
-  (define chord (make-chord (ask-for-chord)))
-  (define option (make-option (ask-for-option)))
-  (define speed (make-speed (ask-for-speed)))
-  (define flavor (make-flavor (ask-for-flavor)))
-  (define range (make-range (ask-for-range)))
+  (define chord  (ask-for-chord))
+  (define option (ask-for-option))
+  (define speed  (ask-for-speed))
+  (define flavor (ask-for-flavor))
+  (define range  (ask-for-range))
   
-  (define chord-config (make-chord-config 
+  (define chord-config (make-chord
                         chord 
                         option 
                         speed
@@ -49,7 +52,8 @@
   (prompt-for-and-return 
    (string-append 
     "Please input a chord progression.\n"
-    "Enter the notes as lowercase letters separated by a space: ")
+    "Up to 4 chords are allowed.\n"
+    "Enter the chords as lowercase letters separated by a space: ")
   )
 )
 
