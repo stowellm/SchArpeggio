@@ -1,6 +1,6 @@
 ; NOTE - remove this line when ready to port over.  
 ; Uncomment when developing to avoid errors
-;#lang racket
+#lang racket
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
@@ -85,6 +85,7 @@
   (define speed (make-speed s))
   (define flavor (make-flavor f))
   (define range (make-range r))
+  (define notes (get-notes-from-root root-note range flavor))
   
   ; root note
   (define (get-root-note) root-note)
@@ -106,6 +107,9 @@
   (define (get-range) range)
   (define (set-range arg) (set! range arg))
   
+  ; all of the notes in the chord
+  (define (get-notes) notes)
+  
   ; dispatch procedure
   ; if arg == null, then we're requesting a getter
   ; otherwise, we want to use a setter with that argument
@@ -116,6 +120,7 @@
           ((eq? sym 'speed) (get-speed))
           ((eq? sym 'flavor) (get-flavor))
           ((eq? sym 'range) (get-range))
+          ((eq? sym 'notes) (get-notes))
           (else (error 
                  (string-append "NO SUCH GETTER METHOD: " 
                                 (symbol->string sym))))
@@ -302,3 +307,26 @@
         (cur-position)  'c6))
 
 ;; #endregion
+(define (get-notes-from-root root range flavor)
+  (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root 'position)))))
+  (define get-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) 2.0 1.5) (root 'position)))))
+  (define get-high-root (hash-ref note-with-name (hash-ref note-at-position (+ 6.0 (root 'position)))))
+  (define get-low-dom (hash-ref note-with-name (hash-ref note-at-position (+ -2.5 (root 'position)))))
+  (define get-low-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) -4.0 -4.5) (root 'position)))))
+  (define get-low-root (hash-ref note-with-name (hash-ref note-at-position (+ -6.0 (root 'position)))))
+  (cond
+    ((eq? range root) (list root))
+    ((eq? range dom) (list root get-dom))
+    ((eq? range third) (list root get-third get-dom))
+    ((eq? range high-root) (list root get-third get-dom get-high-root))
+    ((eq? range low-dom) (list get-low-dom root get-third get-dom get-high-root))
+    ((eq? range low-third) (list get-low-third get-low-dom root get-third get-dom get-high-root))
+    ((eq? range low-root) (list get-low-root get-low-third get-low-dom root get-third get-dom get-high-root))
+    (else (error 
+                 (string-append "NO SUCH NOTE NOTE RANGE " 
+                                (symbol->string range))))))
+
+; Testing functions
+;(define c (make-chord "c" random half 'b 'g))
+;(map (lambda (n) (n 'name)) (c 'notes))
+                         
