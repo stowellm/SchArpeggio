@@ -1,6 +1,6 @@
 ; NOTE - remove this line when ready to port over.  
 ; Uncomment when developing to avoid errors
-#lang racket
+;#lang racket
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;

@@ -37,14 +37,15 @@
             "You will be asked to enter 1 to 4 chord configurations.\n"
             "The setup will guide you through this process.\n\n\n"))
   
-  (set! num-chords (+ num-chords 1))
-  (get-new-chord)
+  (get-new-chords)
   
   (send-chord-config-music progression)
   (send-chord-config-draw progression)
 )
 
-(define (get-new-chord)
+(define (get-new-chords)
+  (set! num-chords (+ num-chords 1))
+  
   (define chord  (ask-for-chord))
   (define option (ask-for-option))
   (define speed  (ask-for-speed))
@@ -58,7 +59,29 @@
                         flavor
                         range))
   
-  (set! progression (append progression chord-config))
+  (if (= num-chords 4)
+      ; user hit max num chords per progression
+      (add-to-progression chord-config)
+      (begin 
+        ; ask for additional chords
+        (if (equal? (prompt-for-and-return (string-append
+                  "\n\nWould you like to enter another chord?\n"
+                  "Enter Y for yes, N for no: ")) "Y")
+            (begin 
+              ; if yes, prompt for another chord
+              (add-to-progression chord-config)
+              (display "\n\n")
+              (get-new-chords))
+            ; otherwise, just add the last chord to the progression
+            (add-to-progression chord-config)
+        )
+      )
+  )
+)
+
+; adds the chord to our list
+(define (add-to-progression chord)
+  (set! progression (append progression (list chord)))
 )
 
 ; prompt the user for the chord
@@ -68,7 +91,7 @@
     "--- Chord #: " (number->string num-chords) " ---\n\n"
     "Please input a chord progression.\n"
     "Up to 4 chords are allowed.\n"
-    "Enter the chords as lowercase letters separated by a space: ")
+    "Enter the root chord as a single lowercase letter: ")
   )
 )
 
@@ -80,7 +103,7 @@
     "a) Down to Up\n"
     "b) Up to Down\n"
     "c) Random\n"
-    "Select a, b, or c (lower case letters only): ")
+    "Select a choice (lower case letters only): ")
   )
 )
 
@@ -94,7 +117,7 @@
     "c) fourth\n"
     "d) eighth\n"
     "e) sixteenth\n"
-    "Select a, b, c, d, or e (lower case letters only): ")
+    "Select a choice (lower case letters only): ")
    )
 )
 
@@ -105,7 +128,7 @@
     "\n\nPlease input a flavor for the chord.\n"
     "a) major\n"
     "b) minor\n"
-    "Select a or b (lower case letters only): ")
+    "Select a choice (lower case letters only): ")
    )
 )
 
@@ -121,7 +144,7 @@
     "e) low dom\n"
     "f) low third\n"
     "g) low root\n"
-    "Select a, b, c, d, e, f, or g (lower case letters only) :")
+    "Select a choice (lower case letters only): ")
   )
 )
 
