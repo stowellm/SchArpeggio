@@ -155,7 +155,7 @@
 
 ; send the chord-config off to the drawing library
 (define (send-chord-config-draw chord-config)
-  (display "TODO-BY-MIKE-WITH-HIS-CODE\n")
+  (draw-progression progression) ; TODO why won't this include!? It's in drawing.rkt
 )
 
 ;; #endregion

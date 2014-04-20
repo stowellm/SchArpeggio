@@ -26,6 +26,17 @@
 ; variable that remembers how many staves have been created
 (define num-staves 0)
 
+; draw the notes from the progression passed in by the driver
+(define (draw-progression progression)
+  (if (null? progression)
+      'progression-drawn
+      (begin
+        (draw-note (((car progression) 'root-note) 'height)) ; TODO - pass the entire note in
+        (draw-progression (cdr progression))
+      )
+  )
+)
+
 ; all the notes we need
 (define E 45)
 (define F 40)
@@ -64,18 +75,21 @@
 ; draws a musical note
 (define (draw-note note)
   (move-offset 30 0)
-  (move-offset 0 note)
-  (note-helper 36)
+  (move-offset 0 note) ; TODO - eventually, (note 'height)
+  (make-note-circle 36)
+  ; TODO - draw flag
+  ; TODO - draw extra line if needed
+  ; TODO - fill in note if needed
   (move-offset 0 (- 0 note))
 )
 
 ; helper function that does the actual drawing
-(define (note-helper remaining)
+(define (make-note-circle remaining)
   (turn 10)
   (draw 1)
   (if (= (- remaining 1) 0)
       (do-nothing)
-      (note-helper (- remaining 1)))
+      (make-note-circle (- remaining 1)))
 )
 
 ; ease-of-use command to do nothing
