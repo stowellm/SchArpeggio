@@ -306,33 +306,33 @@
         (cur-position)  'c6))
 
 (define note-length
-  (hash whole  1
-        half   .5
-        quarter .25
-        eighth  .125))
+  (hash whole  2
+        half   1
+        quarter .5
+        eighth  .25))
   
 
 ;; #endregion
-(define (get-notes-from-root root range flavor)
-  (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root 'position)))))
-  (define get-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) 2.0 1.5) (root 'position)))))
-  (define get-high-root (hash-ref note-with-name (hash-ref note-at-position (+ 6.0 (root 'position)))))
-  (define get-low-dom (hash-ref note-with-name (hash-ref note-at-position (+ -2.5 (root 'position)))))
-  (define get-low-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) -4.0 -4.5) (root 'position)))))
-  (define get-low-root (hash-ref note-with-name (hash-ref note-at-position (+ -6.0 (root 'position)))))
+(define (get-notes-from-root root-note range flavor)
+  (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root-note 'position)))))
+  (define get-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) 2.0 1.5) (root-note 'position)))))
+  (define get-high-root (hash-ref note-with-name (hash-ref note-at-position (+ 6.0 (root-note 'position)))))
+  (define get-low-dom (hash-ref note-with-name (hash-ref note-at-position (+ -2.5 (root-note 'position)))))
+  (define get-low-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) -4.0 -4.5) (root-note 'position)))))
+  (define get-low-root (hash-ref note-with-name (hash-ref note-at-position (+ -6.0 (root-note 'position)))))
   (cond
-    ((eq? range root) (list root))
-    ((eq? range dom) (list root get-dom))
-    ((eq? range third) (list root get-third get-dom))
-    ((eq? range high-root) (list root get-third get-dom get-high-root))
-    ((eq? range low-dom) (list get-low-dom root get-third get-dom get-high-root))
-    ((eq? range low-third) (list get-low-third get-low-dom root get-third get-dom get-high-root))
-    ((eq? range low-root) (list get-low-root get-low-third get-low-dom root get-third get-dom get-high-root))
+    ((eq? range root) (list root-note))
+    ((eq? range dom) (list root-note get-dom))
+    ((eq? range third) (list root-note get-third get-dom))
+    ((eq? range high-root) (list root-note get-third get-dom get-high-root))
+    ((eq? range low-dom) (list get-low-dom root-note get-third get-dom get-high-root))
+    ((eq? range low-third) (list get-low-third get-low-dom root-note get-third get-dom get-high-root))
+    ((eq? range low-root) (list get-low-root get-low-third get-low-dom root-note get-third get-dom get-high-root))
     (else (error 
-                 (string-append "NO SUCH NOTE NOTE RANGE " 
+                 (string-append "NO SUCH NOTE RANGE " 
                                 (symbol->string range))))))
 
 ; Testing functions
-;(define c (make-chord "c" 'c 'a 'a 'g))
+;(define c (make-chord "c" 'a 'a 'a 'a))
 ;(map (lambda (n) (n 'name)) (c 'notes))
                         

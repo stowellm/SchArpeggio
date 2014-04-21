@@ -173,3 +173,5 @@
 (define my-in-port (current-input-port))
 
 ;; #endregion
+
+(run)
