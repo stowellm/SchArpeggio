@@ -1,4 +1,4 @@
-#lang racket
+;#lang racket
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
@@ -24,25 +24,54 @@
 ;
 
 ;; play sin wave
-(define (play-note note . chord)
+(define (play-note length note . chord)
   (let ([play-note (lambda (n)
                     (if (eq? n '())
                         #f
-                        (even-out 
+                        (even-out
+                         length
                          n 
                          (sin-osc 
                           ar  
                           ((hash-ref note-with-name n) 'freq) 0))))])
     (map play-note (cons note chord))))
 
-; balance out the tone between earbuds
-(define (even-out note sound)
-  (if (and (audition (out 0 (mul sound .25)))
-           (audition (out 1 (mul sound .25))))
-      note
-      #f))
-
-
 ;; reset
 (define (stop) (with-sc3 reset))
+
+; balance out the tone between earbuds
+(define (even-out length note sound)
+  (if (and (audition (out 0 (mul sound .25)))
+           (audition (out 1 (mul sound .25))))
+      (begin
+        (sleep length)
+        (stop)
+        note)
+      #f))
+
+(define (play-chord-progression prog)
+  (play-chord (car prog))
+  (play-chord-progression (append (cdr prog) (list (car prog)))))
+
+(define (play-chord c)
+  (let ([length (hash-ref note-length (c 'speed))])
+    (display length)
+    (thread (lambda ()
+              (play-note-in-chord c 0)
+              (play-note-in-chord c 1)
+              (play-note-in-chord c 2)
+              (play-note-in-chord c 3))))
+  (sleep 1.1))
+  
+;(define c (make-chord "c" 'a 'b 'a 'g))
+;(play-chord c)
+
+;; play note from a chord
+(define (play-note-in-chord chord note-ref)
+  (even-out
+   (hash-ref note-length (chord 'speed))
+   (list-ref (chord 'notes) note-ref)
+   (sin-osc
+    ar  
+    ((hash-ref note-with-name (list-ref (chord 'notes) note-ref)) 'freq) 0)))
 

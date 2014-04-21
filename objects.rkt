@@ -17,10 +17,10 @@
 ; global values for the enums of option, speed, flavor, and range
 (define down-to-up 'down-to-up)
 (define up-to-down 'up-to-down)
-(define random 'random)
+(define random-order 'random-order)
 (define whole 'whole)
 (define half 'half)
-(define fourth 'fourth)
+(define quarter 'quarter)
 (define eighth 'eighth)
 (define sixteenth 'sixteenth)
 (define major 'major)
@@ -37,7 +37,7 @@
 (define (make-option in)
   (cond ((eq? in 'a) down-to-up)
         ((eq? in 'b) up-to-down)
-        (else        random)
+        (else        random-order)
   )
 )
 
@@ -45,9 +45,8 @@
 (define (make-speed in)
   (cond ((eq? in 'a) whole)
         ((eq? in 'b) half)
-        ((eq? in 'c) fourth)
-        ((eq? in 'd) eighth)
-        (else        sixteenth)
+        ((eq? in 'c) quarter)
+        (else eighth)
   )
 )
 
@@ -306,6 +305,13 @@
         (cur-position)  'b5
         (cur-position)  'c6))
 
+(define note-length
+  (hash whole  1
+        half   .5
+        quarter .25
+        eighth  .125))
+  
+
 ;; #endregion
 (define (get-notes-from-root root range flavor)
   (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root 'position)))))
@@ -327,6 +333,6 @@
                                 (symbol->string range))))))
 
 ; Testing functions
-;(define c (make-chord "c" random half 'b 'g))
+;(define c (make-chord "c" 'c 'a 'a 'g))
 ;(map (lambda (n) (n 'name)) (c 'notes))
-                         
+                        

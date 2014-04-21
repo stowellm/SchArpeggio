@@ -15,9 +15,10 @@
 (require racket/file)
 (require racket/string)
 (require racket/include)
-(include "objects.rkt")
-(include "drawing.rkt")
-;(include "rsc3-sine-play.rkt")
+(include "arpeggiator.rkt")
+;(include "objects.rkt")
+;(include "drawing.rkt")
+
 
 ;; #endregion
 
@@ -40,7 +41,7 @@
   (get-new-chords)
   
   (send-chord-config-music progression)
-  (send-chord-config-draw progression)
+  ;(send-chord-config-draw progression)
 )
 
 (define (get-new-chords)
@@ -102,7 +103,7 @@
     "\n\nPlease input an option to play the arpeggio.\n"
     "a) Down to Up\n"
     "b) Up to Down\n"
-    "c) Random\n"
+    "c) Random Order\n"
     "Select a choice (lower case letters only): ")
   )
 )
@@ -114,9 +115,8 @@
     "\n\nPlease input a speed for the arpeggio.\n"
     "a) whole\n"
     "b) half\n"
-    "c) fourth\n"
+    "c) quarter\n"
     "d) eighth\n"
-    "e) sixteenth\n"
     "Select a choice (lower case letters only): ")
    )
 )
@@ -150,13 +150,14 @@
 
 ; send the chord-config off to the music library
 (define (send-chord-config-music chord-config)
-  (display "TODO-BY-JEREMY-WITH-HIS-CODE\n")
+  (display chord-config)
+  (play-chord-progression chord-config)
 )
 
 ; send the chord-config off to the drawing library
-(define (send-chord-config-draw chord-config)
-  (draw-progression progression) ; TODO why won't this include!? It's in drawing.rkt
-)
+;(define (send-chord-config-draw chord-config)
+  ;(draw-progression progression) ; TODO why won't this include!? It's in drawing.rkt
+;)
 
 ;; #endregion
 
