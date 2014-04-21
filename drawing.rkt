@@ -1,4 +1,3 @@
-;#lang racket
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
 ;;; Drawing Program                                      ;;;
@@ -10,13 +9,11 @@
 ;;; arpeggiator.                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; include statements
-(require graphics/turtles)
-(require racket/include)
-(include "objects.rkt")
-
-; turn on the drawing board
-(turtles #t)
+; include statements and lang
+;#lang racket
+;(require graphics/turtles)
+;(require racket/include)
+;(include "objects.rkt")
 
 ; quick-and-easy way to save each sheet
 (define (save-music-sheet filename)
@@ -31,22 +28,11 @@
   (if (null? progression)
       'progression-drawn
       (begin
-        (draw-note (((car progression) 'root-note) 'height)) ; TODO - pass the entire note in
+        (draw-note ((car progression) 'root-note))
         (draw-progression (cdr progression))
       )
   )
 )
-
-; all the notes we need
-(define E 45)
-(define F 40)
-(define G 35)
-(define A 30)
-(define B 25)
-(define C 20)
-(define D 15)
-(define e 10)
-(define f 5)
 
 ; basic method to draw a new music staff
 (define (draw-new-staff)
@@ -75,12 +61,33 @@
 ; draws a musical note
 (define (draw-note note)
   (move-offset 30 0)
-  (move-offset 0 note) ; TODO - eventually, (note 'height)
+  (move-offset 0 (note 'height))
   (make-note-circle 36)
-  ; TODO - draw flag
-  ; TODO - draw extra line if needed
-  ; TODO - fill in note if needed
-  (move-offset 0 (- 0 note))
+  (draw-flag note)
+  (draw-extra-staff-line note)
+  (draw-fill-in note)
+  (draw-sharp note)
+  (move-offset 0 (- 0 (note 'height)))
+)
+
+; draws the flag if needed on the note
+(define (draw-flag note)
+  'TODO
+)
+
+; draws the extra staff line if needed for the note
+(define (draw-extra-staff-line note)
+  'TODO     
+)
+
+; fill in the note if needed
+(define (draw-fill-in note)
+  'TODO
+)
+
+; draw the sharp on the note if needed
+(define (draw-sharp note)
+  'TODO
 )
 
 ; helper function that does the actual drawing

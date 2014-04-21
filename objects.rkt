@@ -186,7 +186,7 @@
 
 ; Mike - give notes a draw height
 (define (make-draw-height-itr)
-  (define n 145)
+  (define n 150)
   (define (dispatch . msg)
     (cond ((and (pair? msg) (eq? (car msg) 'sharp)) n)
           (else (begin (set! n (- n 5))

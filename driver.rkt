@@ -15,9 +15,16 @@
 (require racket/file)
 (require racket/string)
 (require racket/include)
-(include "arpeggiator.rkt")
-;(include "objects.rkt")
-;(include "drawing.rkt")
+
+; requirements for objects
+(include "objects.rkt")
+
+; requirements for music
+;(include "arpeggiator.rkt")
+
+; requirements for drawing
+(require graphics/turtles)
+(include "drawing.rkt")
 
 
 ;; #endregion
@@ -41,7 +48,7 @@
   (get-new-chords)
   
   (send-chord-config-music progression)
-  ;(send-chord-config-draw progression)
+  (send-chord-config-draw progression)
 )
 
 (define (get-new-chords)
@@ -151,13 +158,16 @@
 ; send the chord-config off to the music library
 (define (send-chord-config-music chord-config)
   (display chord-config)
-  (play-chord-progression chord-config)
+  ;(play-chord-progression chord-config)
 )
 
 ; send the chord-config off to the drawing library
-;(define (send-chord-config-draw chord-config)
-  ;(draw-progression progression) ; TODO why won't this include!? It's in drawing.rkt
-;)
+(define (send-chord-config-draw chord-config)
+  ; turn on the drawing board
+  (turtles #t)
+  ; draw the chord progression
+  (draw-progression progression)
+)
 
 ;; #endregion
 
@@ -173,3 +183,18 @@
 (define my-in-port (current-input-port))
 
 ;; #endregion
+
+
+; test code (remove later)
+(turtles #t)
+(draw-new-staff)
+(draw-note (hash-ref note-with-name 'c2))
+(draw-note (hash-ref note-with-name 'd2))
+(draw-note (hash-ref note-with-name 'e2))
+(draw-note (hash-ref note-with-name 'f2))
+(draw-note (hash-ref note-with-name 'g2))
+(draw-note (hash-ref note-with-name 'c6))
+(draw-note (hash-ref note-with-name 'b5))
+(draw-note (hash-ref note-with-name 'a5))
+(draw-note (hash-ref note-with-name 'g5))
+(draw-note (hash-ref note-with-name 'f5))
