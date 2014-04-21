@@ -184,7 +184,6 @@
 
 ;; #endregion
 
-
 ; test code (remove later)
 (turtles #t)
 (draw-new-staff)

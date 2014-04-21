@@ -54,24 +54,22 @@
   (play-chord-progression (append (cdr prog) (list (car prog)))))
 
 (define (play-chord c)
-  (let ([length (hash-ref note-length (c 'speed))])
-    (display length)
+  (let ([num-notes (length (c 'notes))]
+        [length (hash-ref note-length (c 'speed))])
     (thread (lambda ()
-              (play-note-in-chord c 0)
-              (play-note-in-chord c 1)
-              (play-note-in-chord c 2)
-              (play-note-in-chord c 3))))
-  (sleep 1.1))
+              (play-note-in-chord c (modulo 0 num-notes))
+              )))
+  (sleep 2))
   
-;(define c (make-chord "c" 'a 'b 'a 'g))
-;(play-chord c)
-
 ;; play note from a chord
 (define (play-note-in-chord chord note-ref)
   (even-out
    (hash-ref note-length (chord 'speed))
-   (list-ref (chord 'notes) note-ref)
+   ((list-ref (chord 'notes) note-ref) 'name)
    (sin-osc
     ar  
-    ((hash-ref note-with-name (list-ref (chord 'notes) note-ref)) 'freq) 0)))
+    ((hash-ref note-with-name ((list-ref (chord 'notes) note-ref) 'name)) 'freq) 0)))
+
+;(define c (make-chord "c" 'a 'a 'a 'a))
+;(play-chord-progression (list c))
 
