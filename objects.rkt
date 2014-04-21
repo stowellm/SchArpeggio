@@ -35,24 +35,24 @@
 
 ; enum for option
 (define (make-option in)
-  (cond ((eq? in 'a) down-to-up)
-        ((eq? in 'b) up-to-down)
-        (else        random-order)
+  (cond ((eq? in "a") down-to-up)
+        ((eq? in "b") up-to-down)
+        (else         random-order)
   )
 )
 
 ; enum for speed
 (define (make-speed in)
-  (cond ((eq? in 'a) whole)
-        ((eq? in 'b) half)
-        ((eq? in 'c) quarter)
-        (else eighth)
+  (cond ((eq? in "a") whole)
+        ((eq? in "b") half)
+        ((eq? in "c") quarter)
+        (else         eighth)
   )
 )
 
 ; enum for flavor
 (define (make-flavor in)
-  (if (eq? in 'a)
+  (if (eq? in "a")
       major
       minor
   )
@@ -60,13 +60,13 @@
 
 ; enum for range
 (define (make-range in)
-  (cond ((eq? in 'a) root)
-        ((eq? in 'b) dom)
-        ((eq? in 'c) third)
-        ((eq? in 'd) high-root)
-        ((eq? in 'e) low-dom)
-        ((eq? in 'f) low-third)
-        (else        low-root)
+  (cond ((eq? in "a") root)
+        ((eq? in "b") dom)
+        ((eq? in "c") third)
+        ((eq? in "d") high-root)
+        ((eq? in "e") low-dom)
+        ((eq? in "f") low-third)
+        (else         low-root)
   )
 )
 
