@@ -35,24 +35,25 @@
 
 ; enum for option
 (define (make-option in)
-  (cond ((eq? in "a") down-to-up)
-        ((eq? in "b") up-to-down)
+  (cond ((equal? in "a") down-to-up)
+        ((equal? in "b") up-to-down)
         (else         random-order)
   )
 )
 
 ; enum for speed
 (define (make-speed in)
-  (cond ((eq? in "a") whole)
-        ((eq? in "b") half)
-        ((eq? in "c") quarter)
-        (else         eighth)
+  (cond ((equal? in "a") whole)
+        ((equal? in "b") half)
+        ((equal? in "c") quarter)
+        ((equal? in "d") eighth)
+        (else         sixteenth)
   )
 )
 
 ; enum for flavor
 (define (make-flavor in)
-  (if (eq? in "a")
+  (if (equal? in "a")
       major
       minor
   )
@@ -60,12 +61,12 @@
 
 ; enum for range
 (define (make-range in)
-  (cond ((eq? in "a") root)
-        ((eq? in "b") dom)
-        ((eq? in "c") third)
-        ((eq? in "d") high-root)
-        ((eq? in "e") low-dom)
-        ((eq? in "f") low-third)
+  (cond ((equal? in "a") root)
+        ((equal? in "b") dom)
+        ((equal? in "c") third)
+        ((equal? in "d") high-root)
+        ((equal? in "e") low-dom)
+        ((equal? in "f") low-third)
         (else         low-root)
   )
 )
@@ -144,13 +145,18 @@
   
 ; convert notes to appropriate representation
 (define (notes-to-g3-through-f4 str)
-  (cond ((equal? str "a") "a4")
-        ((equal? str "b") "b4")
-        ((equal? str "c") "c4")
-        ((equal? str "d") "d4")
-        ((equal? str "e") "e4")
-        ((equal? str "f") "f4")
-        (else             "g3")
+  (cond ((equal? str "a")   "a3")
+        ((equal? str "a#") "a#3")
+        ((equal? str "b")   "b3")
+        ((equal? str "c")   "c4")
+        ((equal? str "c#") "c#4")
+        ((equal? str "d")   "d4")
+        ((equal? str "d#") "d#4")
+        ((equal? str "e")   "e4")
+        ((equal? str "f")   "f4")
+        ((equal? str "f#") "f#4")
+        ((equal? str "g")   "g3")
+        (else              "g#3")
   )
 )
 
@@ -309,7 +315,9 @@
   (hash whole  2
         half   1
         quarter .5
-        eighth  .25))
+        eighth  .25
+        sixteenth .125)
+  )
   
 
 ;; #endregion

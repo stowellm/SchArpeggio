@@ -10,11 +10,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require rsc3)
-(require racket/include)
-(include "objects.rkt")
+;(require racket/include)
+;(include "objects.rkt")
 
 ;; start up SuperCollider server with: scsynth -u 57110 -D 0
 ; start the server's node list
+(display "Super Collider initialized: ")
 (with-sc3 (lambda (fd) (send fd (g-new1 1 add-to-tail 0))))
 
 ;;;;;; Notes to self ;;;;;;;
@@ -22,19 +23,6 @@
 ; mul is function with 2 params       :sound   :volume
 ; sin-osc is a function with 3 params :func    :freq    :phase-offset
 ;
-
-;; play sin wave
-(define (play-note length note . chord)
-  (let ([play-note (lambda (n)
-                    (if (eq? n '())
-                        #f
-                        (even-out
-                         length
-                         n 
-                         (sin-osc 
-                          ar  
-                          ((hash-ref note-with-name n) 'freq) 0))))])
-    (map play-note (cons note chord))))
 
 ;; reset
 (define (stop) (with-sc3 reset))
@@ -49,27 +37,51 @@
         note)
       #f))
 
+; loops through chords objects and plays them sucessfully
 (define (play-chord-progression prog)
   (play-chord (car prog))
   (play-chord-progression (append (cdr prog) (list (car prog)))))
 
+
+; plays a chord with a given chord object
 (define (play-chord c)
   (let ([num-notes (length (c 'notes))]
         [length (hash-ref note-length (c 'speed))])
-    (thread (lambda ()
-              (play-note-in-chord c (modulo 0 num-notes))
-              )))
-  (sleep 2))
-  
+    (play-note-in-chord c (modulo 0 num-notes))
+    (if (< length (hash-ref note-length whole))
+        (begin (play-note-in-chord c (modulo 1 num-notes))
+               (if (< length (hash-ref note-length half))
+                   (begin
+                     (play-note-in-chord c (modulo 2 num-notes))
+                     (play-note-in-chord c (modulo 3 num-notes))
+                     (if (< length (hash-ref note-length quarter))
+                         (begin
+                           (play-note-in-chord c (modulo 4 num-notes))
+                           (play-note-in-chord c (modulo 5 num-notes))
+                           (play-note-in-chord c (modulo 6 num-notes))
+                           (play-note-in-chord c (modulo 7 num-notes))
+                           (if (< length (hash-ref note-length quarter))
+                               (begin
+                                 (play-note-in-chord c (modulo 8 num-notes))
+                                 (play-note-in-chord c (modulo 9 num-notes))
+                                 (play-note-in-chord c (modulo 10 num-notes))
+                                 (play-note-in-chord c (modulo 11 num-notes))
+                                 (play-note-in-chord c (modulo 12 num-notes))
+                                 (play-note-in-chord c (modulo 13 num-notes))
+                                 (play-note-in-chord c (modulo 14 num-notes))
+                                 (play-note-in-chord c (modulo 15 num-notes)))
+                               #t))
+                         #t))
+                   #t))
+        #t)))
+
 ;; play note from a chord
 (define (play-note-in-chord chord note-ref)
+  (display ((list-ref (chord 'notes) note-ref) 'name))
   (even-out
    (hash-ref note-length (chord 'speed))
    ((list-ref (chord 'notes) note-ref) 'name)
    (sin-osc
-    ar  
+    ar 
     ((hash-ref note-with-name ((list-ref (chord 'notes) note-ref) 'name)) 'freq) 0)))
-
-;(define c (make-chord "c" 'a 'a 'a 'a))
-;(play-chord-progression (list c))
 

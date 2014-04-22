@@ -20,11 +20,11 @@
 (include "objects.rkt")
 
 ; requirements for music
-;(include "arpeggiator.rkt")
+(include "arpeggiator.rkt")
 
 ; requirements for drawing
-(require graphics/turtles)
-(include "drawing.rkt")
+;(require graphics/turtles)
+;(include "drawing.rkt")
 
 
 ;; #endregion
@@ -48,7 +48,7 @@
   (get-new-chords)
   
   (send-chord-config-music progression)
-  (send-chord-config-draw progression)
+  ;(send-chord-config-draw progression)
 )
 
 (define (get-new-chords)
@@ -124,6 +124,7 @@
     "b) half\n"
     "c) quarter\n"
     "d) eighth\n"
+    "e) sixteenth\n"
     "Select a choice (lower case letters only): ")
    )
 )
@@ -157,17 +158,16 @@
 
 ; send the chord-config off to the music library
 (define (send-chord-config-music chord-config)
-  (display chord-config)
-  ;(play-chord-progression chord-config)
+  (play-chord-progression chord-config)
 )
 
 ; send the chord-config off to the drawing library
-(define (send-chord-config-draw chord-config)
+;(define (send-chord-config-draw chord-config)
   ; turn on the drawing board
-  (turtles #t)
+  ;(turtles #t)
   ; draw the chord progression
-  (draw-progression progression)
-)
+  ;(draw-progression progression)
+;)
 
 ;; #endregion
 
@@ -185,15 +185,20 @@
 ;; #endregion
 
 ; test code (remove later)
-(turtles #t)
-(draw-new-staff)
-(draw-note (hash-ref note-with-name 'c2))
-(draw-note (hash-ref note-with-name 'd2))
-(draw-note (hash-ref note-with-name 'e2))
-(draw-note (hash-ref note-with-name 'f2))
-(draw-note (hash-ref note-with-name 'g2))
-(draw-note (hash-ref note-with-name 'c6))
-(draw-note (hash-ref note-with-name 'b5))
-(draw-note (hash-ref note-with-name 'a5))
-(draw-note (hash-ref note-with-name 'g5))
-(draw-note (hash-ref note-with-name 'f5))
+;(turtles #t)
+;(draw-new-staff)
+;(draw-note (hash-ref note-with-name 'c2))
+;(draw-note (hash-ref note-with-name 'd2))
+;(draw-note (hash-ref note-with-name 'e2))
+;(draw-note (hash-ref note-with-name 'f2))
+;(draw-note (hash-ref note-with-name 'g2))
+;(draw-note (hash-ref note-with-name 'c6))
+;(draw-note (hash-ref note-with-name 'b5))
+;(draw-note (hash-ref note-with-name 'a5))
+;(draw-note (hash-ref note-with-name 'g5))
+;(draw-note (hash-ref note-with-name 'f5))
+
+;(run)
+
+;(define c (make-chord "c" "a" "a" "a" "a"))
+(run)
