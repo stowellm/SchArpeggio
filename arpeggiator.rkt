@@ -1,5 +1,3 @@
-;#lang racket
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
 ;;; Music Library                                        ;;;
@@ -9,7 +7,7 @@
 ;;; goes on in the arpeggiator.                          ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require rsc3)
+;#lang racket
 ;(require racket/include)
 ;(include "objects.rkt")
 
@@ -25,7 +23,7 @@
 ;
 
 ;; reset
-(define (stop) (with-sc3 reset))
+(define (rsc3-stop) (with-sc3 reset))
 
 ; balance out the tone between earbuds
 (define (even-out length note sound)
@@ -33,7 +31,7 @@
            (audition (out 1 (mul sound .25))))
       (begin
         (sleep length)
-        (stop)
+        (rsc3-stop)
         note)
       #f))
 
@@ -77,11 +75,11 @@
 
 ;; play note from a chord
 (define (play-note-in-chord chord note-ref)
-  (display ((list-ref (chord 'notes) note-ref) 'name))
+  (draw-note (list-ref (chord 'notes) note-ref) (chord 'speed))
   (even-out
    (hash-ref note-length (chord 'speed))
    ((list-ref (chord 'notes) note-ref) 'name)
    (sin-osc
-    ar 
+    ar
     ((hash-ref note-with-name ((list-ref (chord 'notes) note-ref) 'name)) 'freq) 0)))
 

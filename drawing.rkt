@@ -10,10 +10,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; include statements and lang
-#lang racket
-(require graphics/turtles)
-(require racket/include)
-(include "objects.rkt")
+;#lang racket
+;(require graphics/turtles)
+;(require racket/include)
+;(include "objects.rkt")
 
 ; quick-and-easy way to save each sheet
 (define (save-music-sheet filename)
@@ -110,7 +110,7 @@
           )
         )
     )
-    (do-nothing)
+    (nothing)
  )
 )
 
@@ -142,7 +142,7 @@
           (move-offset 12 0)
         ))
       ; no extra line
-      (else do-nothing)
+      (else nothing)
   )
 )
   
@@ -153,7 +153,7 @@
       (begin
         'TODO
       )
-      (do-nothing)
+      (nothing)
   )
 )
 
@@ -167,12 +167,12 @@
   (turn 10)
   (draw 1)
   (if (= (- remaining 1) 0)
-      (do-nothing)
+      (nothing)
       (make-note-circle (- remaining 1)))
 )
 
 ; ease-of-use command to do nothing
-(define (do-nothing)
+(define (nothing)
   (turn 0)
 )
 
