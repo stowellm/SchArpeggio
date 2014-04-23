@@ -227,9 +227,24 @@
           (equal? speed eighth)
           (equal? speed sixteenth))
       (begin
-        'TODO
+        (move-offset 0 -1)
+        (fill-in-helper 5)
+        (move-offset 0 1)
       )
       (nothing)
+  )
+)
+
+(define (fill-in-helper level)
+  (if (= level 0)
+      (nothing)
+      (begin
+        (draw-offset level (- 0 level))
+        (draw-offset (- 0 level) (- 0 level))
+        (draw-offset (- 0 level) level)
+        (draw-offset level level)
+        (fill-in-helper (- level 1))
+      )
   )
 )
 
