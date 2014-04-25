@@ -24,7 +24,7 @@
 (define num-staves 0)
 
 ; basic method to draw a new music staff
-(define (draw-new-staff . is-right-staff?) ; TODO - bool for left or right staff
+(define (draw-new-staff . is-right-staff?)
   (let ((draw-right (and (not (null? is-right-staff?)) is-right-staff?)))
     (if draw-right
       (next-right-staff-start #f)
@@ -63,12 +63,12 @@
   (draw-offset 0 55)
   (draw-offset -7 -7)
   (draw-offset 5 0)
-  (move-offset -4 -61)
+  (move-offset -4 -65)
 )
 
 ; draw the bass clef on the staff
 (define (draw-bass-clef)
-  (move-offset 4 88)
+  (move-offset 4 92)
   (draw-offset 0 5)
   (draw-offset -3 3)
   (draw-offset -4 0)
@@ -84,14 +84,13 @@
   (draw-offset 0 2)
   (move-offset 0 2)
   (draw-offset 0 2)
-  (move-offset -18 -92)
+  (move-offset -18 -96)
 )
 
 
 ; draw the notes from the progression passed in by the driver
 ; on a right-sided staff
 (define (draw-progression progression)
-  ;(next-right-staff-start)
   (draw-new-staff #t)
   (progression-helper progression)
   (draw-repeat)
@@ -99,7 +98,7 @@
 
 (define (progression-helper progression)
   (if (null? progression)
-      'progression-drawn
+      (nothing)
       (begin
         (draw-chord (car progression))
         (progression-helper (cdr progression))
@@ -149,10 +148,21 @@
 
 ; draws a chord
 (define (draw-chord chord)
-  ; draw the root note
-  (draw-note (chord 'root-note) (chord 'speed))
-  
-  ; TODO - draw the rest of the notes
+  ; draw the root note with a whole speed - chords are all wholes
+  (draw-note (chord 'root-note) whole)
+  ; draw any other notes in the chord
+  (draw-chord-rest (chord 'notes))
+)
+
+(define (draw-chord-rest rest)
+  (if (eq? rest '())
+      (nothing)
+      (begin
+        (draw-note (car rest) whole)
+        (move-offset -30 0)
+        (draw-chord-rest (cdr rest))
+      )
+  )
 )
 
 ; method to be called either by the draw-chord procedure
@@ -376,8 +386,7 @@
 (define (test)
   (turtles #t)
   (draw-new-staff)
-  (define chord (make-chord "e" "a" "a" "a" "a"))
-  (draw-chord chord)
+  (draw-note (hash-ref note-with-name 'b3)  'whole)
   (draw-note (hash-ref note-with-name 'c#4) 'eighth)
   (draw-note (hash-ref note-with-name 'c2)  'quarter)
   (draw-note (hash-ref note-with-name 'd#2) 'sixteenth)
@@ -396,16 +405,23 @@
 )
 
 (define (big-test)
+  (turtles #t)
   (test)
   (test)
   (test)
   (test)
-  ;(draw-new-staff #t)
+  (prog-test)
+  (disappear)
+)
+
+(define (prog-test)
+  (turtles #t)
   (define chord1 (make-chord "d" "b" "a" "b" "c"))
   (define chord2 (make-chord "b" "b" "b" "b" "c"))
-  (define progression (list chord1 chord2))
+  (define chord3 (make-chord "c" "b" "b" "b" "c"))
+  (define chord4 (make-chord "e" "b" "b" "b" "c"))
+  (define progression (list chord1 chord2 chord3 chord4))
   (draw-progression progression)
-  ;(draw-repeat)
   (disappear)
 )
 
