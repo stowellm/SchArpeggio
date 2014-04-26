@@ -44,6 +44,9 @@
 ; number of chords in the progression
 (define num-chords 0)
 
+; path to save the user's file to
+(define path "")
+
 ; procedure to start the driver up
 (define (run)
   (display (string-append 
@@ -51,10 +54,21 @@
             "You will be asked to enter 1 to 4 chord configurations.\n"
             "The setup will guide you through this process.\n\n\n"))
   
+  (get-file-save-path)
   (get-new-chords)
   
-  (send-chord-config-draw progression)  
+  (send-chord-config-draw)  
   (set! music-thread (thread (lambda () (send-chord-config-music progression))))
+)
+
+(define (get-file-save-path)
+  (set! path
+    (prompt-for-and-return 
+      (string-append
+        "\nEnter a full path for SchArpeggio to save your dynamic\n"
+        "music sheet to.  The full path must include the filename to\n"
+        "save as well, without the file extension (which will be .png).\n"
+        "Path: ")))
 )
 
 (define (get-new-chords)
@@ -167,11 +181,11 @@
   (play-chord-progression chord-config))
 
 ; send the chord-config off to the drawing library
-(define (send-chord-config-draw chord-config)
+(define (send-chord-config-draw)
   ; turn on the drawing board
   (turtles #t)
   ; draw the chord progression
-  (draw-progression progression)
+  (draw-progression progression path)
 )
 
 ;; #endregion

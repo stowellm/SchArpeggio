@@ -15,9 +15,12 @@
 (require racket/include)
 (include "objects.rkt")
 
+; path to save the dynamic music sheet
+(define file-path "")
+
 ; quick-and-easy way to save each sheet
 (define (save-music-sheet filename)
-  (save-turtle-bitmap (string-append "/Users/mike/Desktop/" filename ".png") 'png)
+  (save-turtle-bitmap (string-append file-path ".png") 'png)
 )
 
 ; variable that remembers how many staves have been created
@@ -90,7 +93,8 @@
 
 ; draw the notes from the progression passed in by the driver
 ; on a right-sided staff
-(define (draw-progression progression)
+(define (draw-progression progression path)
+  (set! file-path path)
   (draw-new-staff #t)
   (progression-helper progression)
   (draw-repeat)
@@ -421,7 +425,7 @@
   (define chord3 (make-chord "c" "b" "b" "b" "c"))
   (define chord4 (make-chord "e" "b" "b" "b" "c"))
   (define progression (list chord1 chord2 chord3 chord4))
-  (draw-progression progression)
+  (draw-progression progression "")
   (disappear)
 )
 
