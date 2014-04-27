@@ -18,8 +18,8 @@
 ; path to save the dynamic music sheet
 (define file-path "")
 
-; quick-and-easy way to save each sheet
-(define (save-music-sheet filename)
+; save the dynamic sheet at the path
+(define (save-music-sheet)
   (save-turtle-bitmap (string-append file-path ".png") 'png)
 )
 
@@ -27,7 +27,7 @@
 (define num-staves 0)
 
 ; variable that remembers how many notes are on a staff
-(define num-per-staff 0)
+(define cur-staff-weight 0)
 
 ; hash to represent the weighting of each note on a staff
 ; a total weight of 16 is allowed per staff
@@ -163,44 +163,81 @@
   )
 )
 
-; draws a chord
+; draws all the notes in a chord object
 (define (draw-chord chord)
-  ; draw the root note with a whole speed - chords are all wholes
-  ;(draw-note (chord 'root-note) whole)
-  ; draw any other notes in the chord
-  (draw-chord-rest (chord 'notes))
+  (draw-chord-helper (chord 'notes))
   (move-offset 30 0)
 )
 
-(define (draw-chord-rest rest)
+(define (draw-chord-helper rest)
   (if (eq? rest '())
       (nothing)
       (begin
-        (draw-note (car rest) whole)
+        (draw-note (car rest) whole #t)
         (move-offset -30 0)
-        (draw-chord-rest (cdr rest))
+        (draw-chord-helper (cdr rest))
       )
   )
 )
 
-; method to be called either by the draw-chord procedure
+; Method to be called either by the draw-chord procedure
 ; internally or by Jeremy's arpegiator library to draw
-; notes on the staves
-(define (draw-note note speed)
-  ; move the turtle in place
-  (move-offset 30 (note 'height))
-  ; draw the circle
-  (make-note-circle 36)
-  ; draw the appropriate note flag
-  (draw-flag (note 'flag-pos-up?) speed)
-  ; draw an extra staff line(s) as needed
-  (draw-extra-staff-line (note 'name))
-  ; fill in the note if needed
-  (draw-fill-in speed)
-  ; draw sharp symbol if note is sharp
-  (draw-sharp (note 'sharp?))
-  ; prepare to draw next note
-  (move-offset 0 (- 0 (note 'height)))
+; notes on the staves.  This is the bulk of the application.
+(define (draw-note note speed . is-chord?)
+  ; if we have already drew the max amount of staves,
+  ; short circuit out of the function
+  (if (> num-staves 4)
+      (nothing)
+      (let ((should-draw-note? #t))
+        ; first check if we need to draw a new staff yet
+        (if (> cur-staff-weight 15)
+            (begin
+              (if (= num-staves 4)
+                  (begin
+                    (save-music-sheet)
+                    (set! num-staves (+ num-staves 1))
+                    (set! should-draw-note? #f)
+                  )
+                  (draw-new-staff)
+              )
+              (set! cur-staff-weight 0)
+             )
+             (nothing)
+        )
+        ; draw note only if cleared to
+        (if should-draw-note?
+            (begin
+              ; update the staff weight for this note, unless
+              ; this note is a chord
+              (if (and (not (null? is-chord?)) is-chord?)
+                  (nothing)
+                  (set! cur-staff-weight 
+                        (+ cur-staff-weight
+                           (hash-ref note-weight speed))))
+              ; move the turtle in place
+              (move-offset 30 (note 'height))
+              ; draw the circle
+              (make-note-circle 36)
+              ; draw the appropriate note flag
+              (draw-flag (note 'flag-pos-up?) speed)
+              ; draw an extra staff line(s) as needed
+              (draw-extra-staff-line (note 'name))
+              ; fill in the note if needed
+              (draw-fill-in speed)
+              ; draw sharp symbol if note is sharp
+              (draw-sharp (note 'sharp?))
+              ; prepare to draw next note by resetting turtle height
+              (move-offset 0 (- 0 (note 'height)))
+              ; based on weight of note, move the turtle further 
+              ; right on the staff to even out the notes per measure
+              (cond ((equal? speed half)    (move-offset 210 0))
+                    ((equal? speed quarter) (move-offset 90 0))
+                    ((equal? speed eighth)  (move-offset 30 0)))
+            )
+            (nothing)
+        )
+     )
+  )
 )
 
 ; draws the flag if needed on the note
@@ -405,30 +442,42 @@
   (turtles #t)
   (draw-new-staff)
   (draw-note (hash-ref note-with-name 'b3)  'whole)
-  (draw-note (hash-ref note-with-name 'c#4) 'eighth)
-  (draw-note (hash-ref note-with-name 'c2)  'quarter)
-  (draw-note (hash-ref note-with-name 'd#2) 'sixteenth)
-  (draw-note (hash-ref note-with-name 'e2)  'half)
-  (draw-note (hash-ref note-with-name 'f#2) 'eighth)
-  (draw-note (hash-ref note-with-name 'g2)  'sixteenth)
-  (draw-note (hash-ref note-with-name 'c6)  'whole)
-  (draw-note (hash-ref note-with-name 'b5)  'quarter)
-  (draw-note (hash-ref note-with-name 'a#5) 'half)
-  (draw-note (hash-ref note-with-name 'g5)  'whole)
+  (draw-note (hash-ref note-with-name 'c#4) 'half)
+  (draw-note (hash-ref note-with-name 'c2)  'half)
+  (draw-note (hash-ref note-with-name 'd#2) 'quarter)
+  (draw-note (hash-ref note-with-name 'e2)  'quarter)
+  (draw-note (hash-ref note-with-name 'f#2) 'quarter)
+  (draw-note (hash-ref note-with-name 'g2)  'quarter)
+  (draw-note (hash-ref note-with-name 'c6)  'eighth)
+  (draw-note (hash-ref note-with-name 'b5)  'eighth)
+  (draw-note (hash-ref note-with-name 'a#5) 'eighth)
+  (draw-note (hash-ref note-with-name 'g5)  'eighth)
   (draw-note (hash-ref note-with-name 'f5)  'eighth)
-  (draw-note (hash-ref note-with-name 'f#5) 'sixteenth)
+  (draw-note (hash-ref note-with-name 'f#5) 'eighth)
   (draw-note (hash-ref note-with-name 'f5)  'eighth)
-  (draw-note (hash-ref note-with-name 'f#5) 'half)
-  (draw-note (hash-ref note-with-name 'f5)  'eighth)
+  (draw-note (hash-ref note-with-name 'f#5) 'eighth)
+  (draw-note (hash-ref note-with-name 'f5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'g3)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'c5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'f5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'f5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'a5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'a3)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'e5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'e5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'e5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'd#2)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'f#5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'f5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'a5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'f5)  'sixteenth)
+  (draw-note (hash-ref note-with-name 'e3)  'sixteenth)
 )
 
 (define (big-test)
-  (turtles #t)
-  (test)
-  (test)
-  (test)
-  (test)
+  (set! file-path "T:\\icanhazdrawing")
   (prog-test)
+  (test)
   (disappear)
 )
 
