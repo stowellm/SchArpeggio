@@ -26,6 +26,19 @@
 ; variable that remembers how many staves have been created
 (define num-staves 0)
 
+; variable that remembers how many notes are on a staff
+(define num-per-staff 0)
+
+; hash to represent the weighting of each note on a staff
+; a total weight of 16 is allowed per staff
+(define note-weight (hash
+  whole     16
+  half      8
+  quarter   4
+  eighth    2
+  sixteenth 1
+))
+
 ; basic method to draw a new music staff
 (define (draw-new-staff . is-right-staff?)
   (let ((draw-right (and (not (null? is-right-staff?)) is-right-staff?)))
@@ -41,13 +54,14 @@
             (move-offset 0 110) (move-offset 0 120))
     (if draw-right
       (draw 215)
-      (draw 500))
+      (draw 510))
     (if draw-right
       (next-right-staff-start #t)
       (next-left-staff-start #f))
   )
   (draw-treble-clef)
   (draw-bass-clef)
+  (move-offset 10 0)
 )
 
 ; draw the treble clef on the staff
@@ -90,26 +104,6 @@
   (move-offset -18 -96)
 )
 
-
-; draw the notes from the progression passed in by the driver
-; on a right-sided staff
-(define (draw-progression progression path)
-  (set! file-path path)
-  (draw-new-staff #t)
-  (progression-helper progression)
-  (draw-repeat)
-)
-
-(define (progression-helper progression)
-  (if (null? progression)
-      (nothing)
-      (begin
-        (draw-chord (car progression))
-        (progression-helper (cdr progression))
-      )
-  )
-)
-
 ; draw the repeat symbol on the sheet
 (define (draw-repeat)
   (home)
@@ -150,12 +144,32 @@
       (move-offset 10 -160))
 )
 
+; draw the notes from the progression passed in by the driver
+; on a right-sided staff
+(define (draw-progression progression path)
+  (set! file-path path)
+  (draw-new-staff #t)
+  (progression-helper progression)
+  (draw-repeat)
+)
+
+(define (progression-helper progression)
+  (if (null? progression)
+      (nothing)
+      (begin
+        (draw-chord (car progression))
+        (progression-helper (cdr progression))
+      )
+  )
+)
+
 ; draws a chord
 (define (draw-chord chord)
   ; draw the root note with a whole speed - chords are all wholes
-  (draw-note (chord 'root-note) whole)
+  ;(draw-note (chord 'root-note) whole)
   ; draw any other notes in the chord
   (draw-chord-rest (chord 'notes))
+  (move-offset 30 0)
 )
 
 (define (draw-chord-rest rest)
@@ -422,8 +436,8 @@
   (turtles #t)
   (define chord1 (make-chord "d" "b" "a" "b" "c"))
   (define chord2 (make-chord "b" "b" "b" "b" "c"))
-  (define chord3 (make-chord "c" "b" "b" "b" "c"))
-  (define chord4 (make-chord "e" "b" "b" "b" "c"))
+  (define chord3 (make-chord "c" "b" "d" "b" "c"))
+  (define chord4 (make-chord "e" "b" "e" "b" "c"))
   (define progression (list chord1 chord2 chord3 chord4))
   (draw-progression progression "")
   (disappear)
