@@ -203,5 +203,6 @@
 
 ;; #endregion
 
+; Test code
 ;(define c (make-chord "c" "a" "a" "a" "a"))
 (run)

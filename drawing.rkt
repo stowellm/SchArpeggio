@@ -9,16 +9,16 @@
 ;;; arpeggiator.                                         ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; include statements and lang
-#lang racket
-(require graphics/turtles)
-(require racket/include)
-(include "objects.rkt")
+; include statements and lang - commented out to allow driver to run
+;#lang racket
+;(require graphics/turtles)
+;(require racket/include)
+;(include "objects.rkt")
 
 ; path to save the dynamic music sheet
 (define file-path "")
 
-; save the dynamic sheet at the path
+; save the dynamic sheet at the path, passed in by the driver
 (define (save-music-sheet)
   (save-turtle-bitmap (string-append file-path ".png") 'png)
 )
@@ -123,7 +123,7 @@
   (move-offset 1000 1000)
 )
 
-; position the turtle in place to draw a right staff
+; position the turtle in place to draw a right staff.
 ; boolean indicates whether or not to position 10 more pixels
 ; over to begin drawing notes
 (define (next-right-staff-start bool)
@@ -134,7 +134,7 @@
       (nothing))
 )
 
-; go to the next left staff starting location
+; go to the next left staff starting location.
 ; boolean indicates whether or not to increment num-staves
 (define (next-left-staff-start bool)
   (home)
@@ -145,7 +145,7 @@
 )
 
 ; draw the notes from the progression passed in by the driver
-; on a right-sided staff
+; on a right-sided staff, and save the file path
 (define (draw-progression progression path)
   (set! file-path path)
   (draw-new-staff #t)
@@ -192,11 +192,13 @@
         ; first check if we need to draw a new staff yet
         (if (> cur-staff-weight 15)
             (begin
+              ; may have reached end - save music sheet
               (if (= num-staves 4)
                   (begin
                     (save-music-sheet)
                     (set! num-staves (+ num-staves 1))
                     (set! should-draw-note? #f)
+                    (disappear)
                   )
                   (draw-new-staff)
               )
@@ -272,27 +274,27 @@
   )
 )
 
-; draw a flag on the up eighth note
+; draw a flag up on the eighth note
 (define (eighth-flag-up)
   (draw-offset 10 0)
   (move-offset -15 37)
 )
 
-; draw a flag on the up sixteenth note
+; draw a flag up on the sixteenth note
 (define (sixteenth-flag-up)
   (eighth-flag-up)
   (move-offset 5 -33)
-  (draw-offset 10 0)    ; TODO - more testing on this movement.
+  (draw-offset 10 0)
   (move-offset -15 33)
 )
 
-; draw a flag on the down eighth note
+; draw a flag down on the eighth note
 (define (eighth-flag-down)
   (draw-offset -10 0)
   (move-offset 16 -23)
 )
 
-; draw a flag on the down sixteenth note
+; draw a flag down on the sixteenth note
 (define (sixteenth-flag-down)
   (eighth-flag-down)
   (move-offset -6 19)
@@ -423,7 +425,7 @@
   )
 )
 
-; helper function that does the actual drawing
+; helper function to draw the note circle
 (define (make-note-circle remaining)
   (turn 10)
   (draw 1)
@@ -432,7 +434,8 @@
       (make-note-circle (- remaining 1)))
 )
 
-; ease-of-use command to do nothing
+; ease-of-use command to do nothing - turn the drawing
+; turtle 0 degrees
 (define (nothing)
   (turn 0)
 )
@@ -475,7 +478,7 @@
 )
 
 (define (big-test)
-  (set! file-path "T:\\icanhazdrawing")
+  (set! file-path "/Users/Mike/Desktop/mymusicsheet")
   (prog-test)
   (test)
   (disappear)

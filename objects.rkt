@@ -77,7 +77,7 @@
   (note-sym-to-note-obj (string->symbol (notes-to-g3-through-f4 str)))
 )
 
-; the message passing style chord-config object
+; the message passing style chord object
 (define (make-chord c o s f r)
   ; manipulate chord to a proper note
   (define root-note (chord-string->note c))
@@ -319,8 +319,6 @@
         sixteenth .125)
   )
   
-
-;; #endregion
 (define (get-notes-from-root root-note range flavor)
   (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root-note 'position)))))
   (define get-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) 2.0 1.5) (root-note 'position)))))
@@ -339,6 +337,8 @@
     (else (error 
                  (string-append "NO SUCH NOTE RANGE " 
                                 (symbol->string range))))))
+
+;; #endregion
 
 ; Testing functions
 ;(define c (make-chord "c" 'a 'a 'a 'a))
