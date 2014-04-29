@@ -58,7 +58,7 @@
                            (play-note-in-chord c (modulo 5 num-notes))
                            (play-note-in-chord c (modulo 6 num-notes))
                            (play-note-in-chord c (modulo 7 num-notes))
-                           (if (< length (hash-ref note-length quarter))
+                           (if (< length (hash-ref note-length eighth))
                                (begin
                                  (play-note-in-chord c (modulo 8 num-notes))
                                  (play-note-in-chord c (modulo 9 num-notes))

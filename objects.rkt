@@ -79,13 +79,13 @@
 
 ; the message passing style chord object
 (define (make-chord c o s f r)
-  ; manipulate chord to a proper note
+  ; save the chord options
   (define root-note (chord-string->note c))
   (define option (make-option o))
   (define speed (make-speed s))
   (define flavor (make-flavor f))
   (define range (make-range r))
-  (define notes (get-notes-from-root root-note range flavor))
+  (define notes (get-notes-from-root root-note range flavor option))
   
   ; root note
   (define (get-root-note) root-note)
@@ -316,27 +316,32 @@
         half   1
         quarter .5
         eighth  .25
-        sixteenth .125)
-  )
+        sixteenth .125))
   
-(define (get-notes-from-root root-note range flavor)
+(define (get-notes-from-root root-note range flavor option)
   (define get-dom (hash-ref note-with-name (hash-ref note-at-position (+ 3.5 (root-note 'position)))))
   (define get-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) 2.0 1.5) (root-note 'position)))))
   (define get-high-root (hash-ref note-with-name (hash-ref note-at-position (+ 6.0 (root-note 'position)))))
   (define get-low-dom (hash-ref note-with-name (hash-ref note-at-position (+ -2.5 (root-note 'position)))))
   (define get-low-third (hash-ref note-with-name (hash-ref note-at-position (+ (if (eq? flavor major) -4.0 -4.5) (root-note 'position)))))
   (define get-low-root (hash-ref note-with-name (hash-ref note-at-position (+ -6.0 (root-note 'position)))))
-  (cond
-    ((eq? range root) (list root-note))
-    ((eq? range dom) (list root-note get-dom))
-    ((eq? range third) (list root-note get-third get-dom))
-    ((eq? range high-root) (list root-note get-third get-dom get-high-root))
-    ((eq? range low-dom) (list get-low-dom root-note get-third get-dom get-high-root))
-    ((eq? range low-third) (list get-low-third get-low-dom root-note get-third get-dom get-high-root))
-    ((eq? range low-root) (list get-low-root get-low-third get-low-dom root-note get-third get-dom get-high-root))
-    (else (error 
-                 (string-append "NO SUCH NOTE RANGE " 
-                                (symbol->string range))))))
+  (begin 
+    (define standard
+      (cond
+        ((eq? range root) (list root-note))
+        ((eq? range dom) (list root-note get-dom))
+        ((eq? range third) (list root-note get-third get-dom))
+        ((eq? range high-root) (list root-note get-third get-dom get-high-root))
+        ((eq? range low-dom) (list get-low-dom root-note get-third get-dom get-high-root))
+        ((eq? range low-third) (list get-low-third get-low-dom root-note get-third get-dom get-high-root))
+        ((eq? range low-root) (list get-low-root get-low-third get-low-dom root-note get-third get-dom get-high-root))
+        (else (error 
+               (string-append "NO SUCH NOTE RANGE " 
+                              (symbol->string range))))))
+    ; Mix notes according to chord option
+    (cond ((eq? option up-to-down) (reverse standard))
+          ((eq? option random-order) (shuffle standard))
+          (else standard))))
 
 ;; #endregion
 

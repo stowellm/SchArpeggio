@@ -38,7 +38,7 @@
 ; the music thread
 (define music-thread (void))
 (define (stop)
-  (kill-thread music-thread)
+  (r(kill-thread music-thread)
   (rsc3-stop))
 
 ; number of chords in the progression
@@ -88,8 +88,13 @@
                         range))
   
   (if (= num-chords 4)
-      ; user hit max num chords per progression
-      (add-to-progression chord-config)
+      (begin
+        ; reset the number of chords and progression
+        (set! progression '())
+        (set! num-chords 0)
+      
+        ; user hit max num chords per progression
+        (add-to-progression chord-config))
       (begin
         ; ask for additional chords
         (if (equal? (prompt-for-and-return (string-append
@@ -186,6 +191,7 @@
   (turtles #t)
   ; draw the chord progression
   (draw-progression progression path)
+  (draw-new-staff)
 )
 
 ;; #endregion
