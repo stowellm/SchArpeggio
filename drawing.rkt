@@ -440,6 +440,13 @@
   (turn 0)
 )
 
+; reset the drawing board
+(define (reset-music-sheet)
+  (clear)
+  (home)
+  (turtles #f)
+)
+
 ; test function
 (define (test)
   (turtles #t)
