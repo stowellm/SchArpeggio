@@ -76,10 +76,14 @@
 ;; play note from a chord
 (define (play-note-in-chord chord note-ref)
   (draw-note (list-ref (chord 'notes) note-ref) (chord 'speed))
+  (define sound-func
+    (cond ((eq? (chord 'sound-font) triangle-wave) lf-tri)
+          ((eq? (chord 'sound-font) saw-wave) lf-saw)
+          (else sin-osc)))
   (even-out
    (hash-ref note-length (chord 'speed))
    ((list-ref (chord 'notes) note-ref) 'name)
-   (sin-osc
+   (sound-func
     ar
     ((hash-ref note-with-name ((list-ref (chord 'notes) note-ref) 'name)) 'freq) 0)))
 

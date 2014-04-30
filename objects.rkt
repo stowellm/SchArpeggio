@@ -32,14 +32,15 @@
 (define low-dom 'low-dom)
 (define low-third 'low-third)
 (define low-root 'low-root)
+(define saw-wave 'saw-wave)
+(define triangle-wave 'triangle-wave)
+(define sine-wave 'sine-wave)
 
 ; enum for option
 (define (make-option in)
   (cond ((equal? in "a") down-to-up)
         ((equal? in "b") up-to-down)
-        (else         random-order)
-  )
-)
+        (else         random-order)))
 
 ; enum for speed
 (define (make-speed in)
@@ -47,17 +48,13 @@
         ((equal? in "b") half)
         ((equal? in "c") quarter)
         ((equal? in "d") eighth)
-        (else         sixteenth)
-  )
-)
+        (else         sixteenth)))
 
 ; enum for flavor
 (define (make-flavor in)
   (if (equal? in "a")
       major
-      minor
-  )
-)
+      minor))
 
 ; enum for range
 (define (make-range in)
@@ -67,24 +64,28 @@
         ((equal? in "d") high-root)
         ((equal? in "e") low-dom)
         ((equal? in "f") low-third)
-        (else         low-root)
-  )
-)
+        (else         low-root)))
+
+; enum for sound-font
+(define (make-sound-font in)
+  (cond ((equal? in "a") triangle-wave)
+        ((equal? in "b") saw-wave)
+        (else sine-wave)))
 
 
 ; convert the string input to our internal chord list
 (define (chord-string->note str)
-  (note-sym-to-note-obj (string->symbol (notes-to-g3-through-f4 str)))
-)
+  (note-sym-to-note-obj (string->symbol (notes-to-g3-through-f4 str))))
 
 ; the message passing style chord object
-(define (make-chord c o s f r)
+(define (make-chord c o s f r sf)
   ; save the chord options
   (define root-note (chord-string->note c))
   (define option (make-option o))
   (define speed (make-speed s))
   (define flavor (make-flavor f))
   (define range (make-range r))
+  (define sound-font (make-sound-font sf))
   (define notes (get-notes-from-root root-note range flavor option))
   
   ; root note
@@ -106,10 +107,15 @@
   ; amount of notes in arpeggio
   (define (get-range) range)
   (define (set-range arg) (set! range arg))
+    
+  ; sound font of chord
+  (define (get-sound-font) sound-font)
+  (define (set-sound-font arg) (set! sound-font arg))
   
   ; all of the notes in the chord
   (define (get-notes) notes)
-  
+  (define (set-notes arg) (set! notes arg))
+    
   ; dispatch procedure
   ; if arg == null, then we're requesting a getter
   ; otherwise, we want to use a setter with that argument
@@ -121,27 +127,24 @@
           ((eq? sym 'flavor) (get-flavor))
           ((eq? sym 'range) (get-range))
           ((eq? sym 'notes) (get-notes))
+          ((eq? sym 'sound-font) (get-sound-font))
           (else (error 
                  (string-append "NO SUCH GETTER METHOD: " 
-                                (symbol->string sym))))
-         )
+                                (symbol->string sym)))))
         (cond ((eq? sym 'root-note) (set-root-note arg))
           ((eq? sym 'option) (set-option arg))
           ((eq? sym 'speed) (set-speed arg))
           ((eq? sym 'flavor) (set-flavor arg))
           ((eq? sym 'range) (set-range arg))
+          ((eq? sym 'notes) (set-notes arg))
+          ((eq? sym 'sound-font) (set-sound-font arg))
           (else (error 
                  (string-append "NO SUCH SETTER METHOD: " 
-                                (symbol->string sym))))
-       )
-    )
-  )
-  dispatch
-)
+                                (symbol->string sym)))))))
+  dispatch)
 
 (define (note-sym-to-note-obj sym)
-   (hash-ref note-with-name sym)
-)
+   (hash-ref note-with-name sym))
   
 ; convert notes to appropriate representation
 (define (notes-to-g3-through-f4 str)
@@ -156,9 +159,7 @@
         ((equal? str "f")   "f4")
         ((equal? str "f#") "f#4")
         ((equal? str "g")   "g3")
-        (else              "g#3")
-  )
-)
+        (else              "g#3")))
 
 ;; #endregion
 
@@ -250,9 +251,7 @@
                 'a5 (make-note  'a5   880.00 (cur-position) (cur-draw-height)        #f #f)
                'a#5 (make-note 'a#5   932.32 (cur-position) (cur-draw-height 'sharp) #t #f)
                 'b5 (make-note  'b5   987.76 (cur-position) (cur-draw-height)        #f #f)
-                'c6 (make-note  'c6  1046.50 (cur-position) (cur-draw-height)        #f #f)
-                )
-)
+                'c6 (make-note  'c6  1046.50 (cur-position) (cur-draw-height)        #f #f)))
 
 ;; #endregion
 
