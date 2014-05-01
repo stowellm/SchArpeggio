@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SchArpeggio                                          ;;;
 ;;; Driver Program                                       ;;;
-;;; Mike Stowell                                         ;;;
+;;; Mike Stowell, some modifications by Jeremy Poulin    ;;;
 ;;;                                                      ;;;
 ;;; Class that contains the main driver to run the       ;;;
 ;;; SchArpeggiator program in addition to the global     ;;;
