@@ -444,6 +444,8 @@
 (define (reset-music-sheet)
   (clear)
   (home)
+  (set! num-staves 0)
+  (set! cur-staff-weight 0)
   (turtles #f)
 )
 
