@@ -37,9 +37,13 @@
 
 ; the music thread
 (define music-thread (void))
+
+; stops and resets the driver
 (define (stop)
   (kill-thread music-thread)
-  (rsc3-stop))
+  (reset-music-sheet)
+  (rsc3-stop)
+  (run))
 
 ; number of chords in the progression
 (define num-chords 0)
