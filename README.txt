@@ -181,12 +181,11 @@ messed up.
 >> Jeremy <<
 
 Rsc3 is the worst sound library in the history of mankind. It is missing a key
-feature of actual SuperCollider, namely patterns.  Patterns would have increasing
+feature of actual SuperCollider, namely patterns.  Patterns would have increased
 the sound quality of my arpeggiator, and most importantly allowed me to play notes
-seperately instead have having a thread sleep and resetting the server to create 
+seperately instead of having a thread sleep and resetting the server to create 
 seperate notes from sound waves. I'm also note particularly fond of my play-chord
 function. I could have made it recursive but chose not to because I was in a rush.
 
 
 ______________________________________________________________________________
-
