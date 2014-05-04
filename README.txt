@@ -25,8 +25,8 @@ ______________________________________________________________________________
 Who worked on what:
 
 Mike was responsible for the majority of the driver code, some of the objects,
-and the entirety of the drawing file.  Jeremy was responsible for tweaking some
-code in the driver, many additional objects, and the entirety of the arpeggiator.
+and the entirety of the drawing file.  Jeremy was responsible for extending the
+driver, many additional objects, and the entirety of the arpeggiator.
 Code comments are left in the objects file to point out who worked on what.
 
 ______________________________________________________________________________
@@ -78,7 +78,9 @@ How to run the code:
 - and finally, reinstall linux at your convenience to undo the horrible things
 	 you just did to your sound set-up
 
-In other words, it is unlikely you will be able to run it.
+In other words, it is inadvisable to run our code. I've tried to make a youtube
+video demo of our project, but I can't because Ubuntu's desktop recording applications
+are as broken as the rest of the operating system. Cheers!
 
 ______________________________________________________________________________
 Code blocks we are happy with:
@@ -130,6 +132,40 @@ This shared hash table is essentially the backbone to our entire application.
 
 >> Jeremy <<
 
+;; play note from a chord
+(define (play-note-in-chord chord note-ref)
+  (draw-note (list-ref (chord 'notes) note-ref) (chord 'speed))
+  (define sound-func
+    (cond ((eq? (chord 'sound-font) triangle-wave) lf-tri)
+          ((eq? (chord 'sound-font) saw-wave) lf-saw)
+          (else sin-osc)))
+  (even-out
+   (hash-ref note-length (chord 'speed))
+   ((list-ref (chord 'notes) note-ref) 'name)
+   (sound-func
+    ar
+    ((hash-ref note-with-name ((list-ref (chord 'notes) note-ref) 'name)) 'freq) 0)))
+
+This block of code is the core of the arpeggiator - it not only allows configurable
+sound wave selection, but also hands off the note information to Mike's drawing library.
+Even-out is an function I made to make sure the sound output would go to both speakers - 
+otherwise it would just go the the left. Note-ref tells you which note in the chord to play,
+and the hash tables provide the actual frequency and note information.
+
+My second favorite code block is as follows:
+
+; loops through chords objects and plays them sucessfully
+(define (play-chord-progression prog)
+  (play-chord (car prog))
+  (play-chord-progression (append (cdr prog) (list (car prog)))))
+
+This is my clever infinite loop control block that keeps the chords playing.
+Essentially, I play the first chord, and then call the function recursively with the 
+car of the list appended to the cdr of the list.  This ends up being an infite cycle, 
+which is wonderfully recursive. While it is possible to write functions like this
+in other languages, I feel like this function truly exemplifies how racket changed
+the way I code.
+
 
 ______________________________________________________________________________
 Annoyances:
@@ -144,6 +180,12 @@ messed up.
 
 >> Jeremy <<
 
+Rsc3 is the worst sound library in the history of mankind. It is missing a key
+feature of actual SuperCollider, namely patterns.  Patterns would have increasing
+the sound quality of my arpeggiator, and most importantly allowed me to play notes
+seperately instead have having a thread sleep and resetting the server to create 
+seperate notes from sound waves. I'm also note particularly fond of my play-chord
+function. I could have made it recursive but chose not to because I was in a rush.
 
 
 ______________________________________________________________________________
